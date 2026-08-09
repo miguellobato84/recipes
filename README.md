@@ -7,7 +7,10 @@ Colección personal de recetas, versionada y basada en Markdown. Cada receta viv
 ```text
 recetas/
 ├── entrantes/      # Entrantes, tapas, ensaladas y sopas
-├── principales/    # Platos principales
+├── principales/    # Platos principales, organizados por proteína
+│   ├── carne/
+│   ├── pescado/
+│   └── vegetarianos/
 ├── panes/          # Pan, masas de pizza y masas saladas
 ├── dulces/         # Tartas, galletas, bollería y dulces
 ├── guarniciones/   # Acompañamientos
@@ -15,11 +18,11 @@ recetas/
 └── bebidas/        # Bebidas frías y calientes
 ```
 
-Usa exactamente una categoría principal: carpeta y campo `categoria` deben coincidir. Añade etiquetas transversales con `etiquetas`, sin duplicar recetas.
+Usa exactamente una categoría principal: la carpeta de categoría y el campo `categoria` deben coincidir. En `principales`, la subcarpeta indica `carne`, `pescado` o `vegetarianos`. Añade etiquetas transversales con `etiquetas`, sin duplicar recetas.
 
 ## Formato de receta
 
-Crea `recetas/<categoria>/<nombre-de-receta>.md`. Los nombres usan minúsculas sin tildes, números y guiones; por ejemplo, `tortilla-de-patatas.md`.
+Crea `recetas/<categoria>/<nombre-de-receta>.md`. En `principales`, crea `recetas/principales/<subcategoria>/<nombre-de-receta>.md`, donde la subcategoría es `carne`, `pescado` o `vegetarianos`. Los nombres usan minúsculas sin tildes, números y guiones; por ejemplo, `tortilla-de-patatas.md`.
 
 ```markdown
 ---

@@ -10,11 +10,12 @@ Este repositorio es una colección canónica de recetas. Prioriza legibilidad hu
 
 ## Reglas de recetas
 
-- Una receta por fichero en `recetas/<categoria>/<nombre>.md`.
+- Una receta por fichero en `recetas/<categoria>/<nombre>.md`. Para `principales`, usa `recetas/principales/<subcategoria>/<nombre>.md`.
 - Categorías permitidas: `entrantes`, `principales`, `panes`, `dulces`, `guarniciones`, `salsas`, `bebidas`.
+- Subcategorías permitidas para `principales`: `carne`, `pescado`, `vegetarianos`.
 - Usa exactamente el YAML y orden de secciones Markdown definido en `README.md`.
 - Nombre de fichero: minúsculas sin tildes, números y guiones. No uses espacios ni guiones bajos.
-- El H1 coincide con `titulo`; carpeta coincide con `categoria`.
+- El H1 coincide con `titulo`; la carpeta de categoría coincide con `categoria`. En recetas de `principales`, la subcarpeta identifica la subcategoría.
 - Ingredientes usan viñetas; pasos usan lista numerada; cada paso describe una acción.
 - Todas las cantidades medibles se expresan preferentemente en masa, usando g o kg. Solo usa ml o l cuando no sea razonable expresar la cantidad en masa. No uses cucharaditas, cucharadas, tazas u otras medidas caseras.
 - Conserva cantidades, unidades, temperaturas, tiempos e incertidumbre recibidas. No inventes datos ausentes: explica incertidumbre en `Notas`.
