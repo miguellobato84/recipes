@@ -43,3 +43,4 @@ raciones: desconocido
 - No intentes obtener una bola seca: el brioche lleva mucha grasa y huevo.
 - Para la primera prueba, no modifiques cantidades salvo que durante el amasado la masa lo requiera claramente.
 - La miga termina de asentarse durante el enfriado.
+- Resultado de esta elaboración: buen sabor, pero miga muy ligera; para bocadillos se deshace.
