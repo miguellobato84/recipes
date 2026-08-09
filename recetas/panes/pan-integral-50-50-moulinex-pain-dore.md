@@ -16,7 +16,7 @@ raciones: desconocido
 - 12 g de azúcar o miel
 - 200 g de harina integral Belbake
 - 200 g de harina de fuerza Belbake
-- 4 g de levadura seca de panadero
+- 3 g de levadura seca de panadero
 
 ## Utensilios
 
