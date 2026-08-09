@@ -28,11 +28,6 @@ titulo: Tortilla de patatas
 categoria: principales
 etiquetas: [española, vegetariana, sin-gluten]
 raciones: 4
-tiempo_preparacion: 20 min
-tiempo_coccion: 30 min
-tiempo_total: 50 min
-fuente: propia
-estado: probada
 ---
 
 # Tortilla de patatas
@@ -42,7 +37,7 @@ estado: probada
 - 700 g de patatas, peladas y cortadas en láminas finas
 - 1 cebolla, cortada en láminas finas
 - 6 huevos
-- 250 ml de aceite de oliva
+- 230 g de aceite de oliva
 - sal
 
 ## Utensilios
@@ -63,12 +58,11 @@ estado: probada
 
 ### Campos y secciones obligatorios
 
-- YAML: `version_esquema`, `titulo`, `categoria`, `etiquetas`, `raciones`, `tiempo_preparacion`, `tiempo_coccion`, `tiempo_total`, `fuente`, `estado`.
+- YAML: `version_esquema`, `titulo`, `categoria`, `etiquetas`, `raciones`.
 - Markdown: un H1 que coincida con `titulo`; secciones H2 `Ingredientes`, `Utensilios`, `Pasos` y `Notas`, en ese orden.
 - Ingredientes: lista sin orden. Indica cantidad, unidad, ingrediente y detalle de preparación.
+- Todas las cantidades medibles se expresan preferentemente en masa, usando g o kg. Solo usa ml o l cuando no sea razonable expresar la cantidad en masa. No uses cucharaditas, cucharadas, tazas u otras medidas caseras.
 - Pasos: lista ordenada. Cada paso contiene una acción observable; incluye temperatura, tiempo e indicios visuales cuando se conozcan.
-
-Usa `desconocido` para metadatos ausentes. Usa `estado: borrador` si no se ha probado, `probada` al cocinarla con éxito o `adaptada` si se modifica desde una fuente. Registra una URL de fuente o `propia`; nunca atribuyas sin comprobar una receta a elaboración propia.
 
 ## Flujo de Git
 
