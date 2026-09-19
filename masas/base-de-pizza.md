@@ -1,7 +1,7 @@
 ---
 version_esquema: 1
 titulo: Base de pizza
-categoria: panes
+categoria: masas
 etiquetas: [pizza, masa, levadura]
 raciones: no especificadas
 ---

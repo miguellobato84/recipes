@@ -1,12 +1,12 @@
 ---
 version_esquema: 1
-titulo: Pan integral 50/50 con fermentación nocturna en UNOLD 68415
-categoria: panes
+titulo: Pan integral 50/50 con fermentación nocturna
+categoria: panificadora
 etiquetas: [integral, panificadora, masa-madre, fermentacion-lenta]
 raciones: desconocido
 ---
 
-# Pan integral 50/50 con fermentación nocturna en UNOLD 68415
+# Pan integral 50/50 con fermentación nocturna
 
 ## Ingredientes
 
@@ -41,4 +41,5 @@ raciones: desconocido
 - La temperatura comprobada durante la noche fue de aproximadamente 20 °C. Una cocina notablemente más caliente o fría cambia el ritmo de fermentación y queda fuera del método verificado.
 - No guardes esta masa en el frigorífico: esa variante no fue la probada por la fuente y necesitaría otros tiempos o proporciones.
 - Esta receta requiere masa madre muy activa; no la sustituyas por levadura seca sin usar otra fórmula comprobada.
-- Fuentes: [pruebas de masa madre nocturna en panificadora de Real Bread Campaign](https://www.sustainweb.org/realbread/bake/jan23-bread-machine-breadmaker-sourdough/) y [manual de la UNOLD 68415](https://www.jlensen.nl/wp-content/uploads/2019/07/68415-BACKMEISTER-Top-Edition-Manual.pdf).
+- Para retirar el amasador tras el amasado nocturno personalizado, hazlo al minuto 10, al terminar el programa (0 minutos restantes). En el programa 2 de la mañana, pausa al cabo de 1 hora y 27 minutos; el visor muestra 2 horas y 5 minutos restantes. Hazlo antes del tercer levado y reanuda en menos de 5 minutos.
+- Fuentes: [pruebas de masa madre nocturna en panificadora de Real Bread Campaign](https://www.sustainweb.org/realbread/bake/jan23-bread-machine-breadmaker-sourdough/) y [manual de la UNOLD 68415](../manuales/68415-BACKMEISTER-Top-Edition-Manual.pdf).
