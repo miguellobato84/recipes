@@ -10,8 +10,8 @@ Este repositorio es una colección canónica de recetas. Prioriza legibilidad hu
 
 ## Reglas de recetas
 
-- Una receta por fichero en `recetas/<categoria>/<nombre>.md`. Para `principales`, usa `recetas/principales/<subcategoria>/<nombre>.md`.
-- Categorías permitidas: `entrantes`, `principales`, `panes`, `dulces`, `guarniciones`, `salsas`, `bebidas`.
+- Una receta por fichero en `<categoria>/<nombre>.md`. Para `principales`, usa `principales/<subcategoria>/<nombre>.md`.
+- Categorías permitidas: `entrantes`, `principales`, `panificadora`, `masas`, `dulces`, `guarniciones`, `salsas`.
 - Subcategorías permitidas para `principales`: `carne`, `pescado`, `vegetarianos`.
 - Usa exactamente el YAML y orden de secciones Markdown definido en `README.md`.
 - Nombre de fichero: minúsculas sin tildes, números y guiones. No uses espacios ni guiones bajos.

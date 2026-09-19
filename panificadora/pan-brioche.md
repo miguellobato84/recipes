@@ -1,12 +1,12 @@
 ---
 version_esquema: 1
-titulo: Pan brioche en UNOLD 68415
-categoria: panes
+titulo: Pan brioche
+categoria: panificadora
 etiquetas: [brioche, sandwich, panificadora, dulce]
 raciones: desconocido
 ---
 
-# Pan brioche en UNOLD 68415
+# Pan brioche
 
 ## Ingredientes
 
@@ -39,13 +39,7 @@ raciones: desconocido
 
 ## Notas
 
-- Esta fórmula adapta proporciones recurrentes en recetas bien valoradas de panificadora a la capacidad y al programa específico de la UNOLD 68415. Combina y sustituye las dos recetas anteriores para Moulinex.
 - La versión rica anterior, con 100 g de mantequilla y 100 g de huevo entero para 400 g de harina, dio buen sabor pero una miga demasiado ligera y frágil para bocadillos. La variante anterior para sándwich reducía la mantequilla a 60 g y el huevo a 50 g. Esta receta adopta un punto intermedio de 75 g de mantequilla y conserva yemas para mantener el carácter de brioche.
-- El manual de la UNOLD 68415 reserva el programa 5, `Hefekuchen`, para masas dulces con levadura y recomienda el tamaño I para la cantidad menor. La parte superior puede quedar más clara que los lados porque el aparato no tiene resistencia superior.
-- Usa levadura seca de panadero, no levadura química tipo Royal.
-- Usa mantequilla blanda, nunca caliente ni derretida.
-- No uses el inicio diferido con leche y huevo dentro de la cubeta.
 - No intentes obtener una bola seca: la masa de brioche debe quedar blanda y algo pegajosa.
-- Para la primera elaboración, no modifiques las cantidades salvo que la consistencia durante el amasado lo requiera claramente.
-- La miga termina de asentarse durante el enfriado.
-- Fuentes consultadas: [manual de la UNOLD 68415](https://www.jlensen.nl/wp-content/uploads/2019/07/68415-BACKMEISTER-Top-Edition-Manual.pdf), [receta y opiniones de brioche en panificadora](https://cuisine.journaldesfemmes.fr/recette/329028-brioche-en-machine-a-pain), [foro de recetas para panificadora](https://www.aufeminin.com/forum/cuisine/recette-de-brioche-pour-machine-a-pain-fd3919153) y [foro sobre brioche que no sube](https://sante-medecine.journaldesfemmes.fr/forum/cuisine/affich-60008491-bonjour-je-n-arrive-pas-a-faire-de-brioche-dans-ma-machine-a-pain-elle-ne-mont).
+- Para retirar el amasador, pausa el programa al cabo de 1 hora y 7 minutos desde el inicio; el visor muestra 1 hora y 38 minutos restantes. Hazlo antes del tercer levado y reanuda en menos de 5 minutos.
+- Fuentes consultadas: [manual de la UNOLD 68415](../manuales/68415-BACKMEISTER-Top-Edition-Manual.pdf), [receta y opiniones de brioche en panificadora](https://cuisine.journaldesfemmes.fr/recette/329028-brioche-en-machine-a-pain), [foro de recetas para panificadora](https://www.aufeminin.com/forum/cuisine/recette-de-brioche-pour-machine-a-pain-fd3919153) y [foro sobre brioche que no sube](https://sante-medecine.journaldesfemmes.fr/forum/cuisine/affich-60008491-bonjour-je-n-arrive-pas-a-faire-de-brioche-dans-ma-machine-a-pain-elle-ne-mont).

@@ -1,12 +1,12 @@
 ---
 version_esquema: 1
-titulo: Pan integral 50/50 en UNOLD 68415
-categoria: panes
+titulo: Pan integral 50/50
+categoria: panificadora
 etiquetas: [integral, panificadora, trigo]
 raciones: desconocido
 ---
 
-# Pan integral 50/50 en UNOLD 68415
+# Pan integral 50/50
 
 ## Ingredientes
 
@@ -43,4 +43,5 @@ raciones: desconocido
 - La harina tipo 1050 forma parte de la receta comprobada. No se propone harina de fuerza como sustitución porque el fabricante no verifica ese cambio.
 - El manual permite elegir el tostado, pero no recomienda uno para esta receta; selecciónalo según preferencia.
 - No se incluye fermentación nocturna: es una técnica válida, pero no forma parte de la receta comprobada por UNOLD y exigiría ajustar levadura, tiempos y programa.
-- Fuentes: [manual de la UNOLD 68415](https://www.jlensen.nl/wp-content/uploads/2019/07/68415-BACKMEISTER-Top-Edition-Manual.pdf) y [equivalencias en masa de sal y azúcar](https://www.edeka.de/wissen/tipps-und-tricks/wie-kann-man-die-grammzahl-ohne-waage-messen/).
+- Para retirar el amasador, pausa el programa al cabo de 1 hora y 30 minutos desde el inicio; el visor muestra 2 horas y 10 minutos restantes. Hazlo antes del tercer levado y reanuda en menos de 5 minutos.
+- Fuentes: [manual de la UNOLD 68415](../manuales/68415-BACKMEISTER-Top-Edition-Manual.pdf) y [equivalencias en masa de sal y azúcar](https://www.edeka.de/wissen/tipps-und-tricks/wie-kann-man-die-grammzahl-ohne-waage-messen/).
