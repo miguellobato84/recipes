@@ -6,6 +6,7 @@ Colección personal de recetas, versionada y basada en Markdown. Cada receta viv
 
 ```text
 entrantes/      # Entrantes, tapas, ensaladas y sopas
+desayunos/      # Desayunos y brunch
 principales/    # Platos principales, organizados por proteína
 ├── carne/
 ├── pescado/
