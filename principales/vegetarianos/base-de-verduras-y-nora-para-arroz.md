@@ -1,7 +1,7 @@
 ---
 version_esquema: 1
 titulo: Base de verduras y ñora para arroz
-categoria: salsas
+categoria: principales
 etiquetas: [verduras, sofrito, arroz, congelable]
 raciones: 8
 ---
