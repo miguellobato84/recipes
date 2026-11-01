@@ -26,6 +26,7 @@ Este repositorio es una colección canónica de recetas. Prioriza legibilidad hu
 - Aplica el cambio mínimo necesario. No reformatees recetas masivamente salvo petición explícita del usuario.
 - Al modificar receta, conserva toda información existente salvo petición explícita para eliminarla.
 - No hagas commit, push, abras pull requests ni cambies configuración Git sin petición explícita.
+- En este repositorio, trabaja siempre en la rama `main`; nunca crees ramas.
 
 ## Validación
 
