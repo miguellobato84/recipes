@@ -67,6 +67,20 @@ raciones: 4
 - Todas las cantidades medibles se expresan preferentemente en masa, usando g o kg. Solo usa ml o l cuando no sea razonable expresar la cantidad en masa. No uses cucharaditas, cucharadas, tazas u otras medidas caseras.
 - Pasos: lista ordenada. Cada paso contiene una acción observable; incluye temperatura, tiempo e indicios visuales cuando se conozcan.
 
+## Navegador web
+
+El repositorio incluye un navegador web estático generado a partir de las recetas Markdown. Permite explorar por categorías, buscar recetas y guardar ingredientes en una lista de la compra que persiste en el navegador. Para regenerarlo localmente:
+
+Sitio público: [Recetas](https://miguellobato84.github.io/recipes/).
+
+```sh
+python3 scripts/generate_site.py
+```
+
+Abre `docs/index.html` en un navegador o sirve la carpeta `docs/` con un servidor estático. El generador solo usa la biblioteca estándar de Python. Edita la plantilla en `site/template.html`, los estilos en `site/styles.css` y las interacciones en `site/app.js`; no edites a mano los ficheros generados en `docs/`.
+
+GitHub Actions vuelve a generar y despliega `docs/` a GitHub Pages en cada push a `main`. El workflow configura Pages para publicar mediante Actions. El enlace de publicación aparece en la ejecución del workflow.
+
 ## Flujo de Git
 
 Un solo cambio de receta, o una sola receta, por commit. Usa mensajes imperativos en español, por ejemplo:

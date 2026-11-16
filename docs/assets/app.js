@@ -1,0 +1,436 @@
+(() => {
+  "use strict";
+
+  const recipes = JSON.parse(document.querySelector("#recipe-data").textContent);
+  const recipeById = new Map(recipes.map((recipe) => [recipe.id, recipe]));
+  const cartStorageKey = "recetas-carrito-v1";
+  const categoryLabels = {
+    desayunos: "Desayunos",
+    entrantes: "Entrantes",
+    principales: "Principales",
+    panificadora: "Panificadora",
+    masas: "Masas",
+    dulces: "Dulces",
+    guarniciones: "Guarniciones",
+    salsas: "Salsas",
+  };
+  const subcategoryLabels = {
+    carne: "Carne",
+    pescado: "Pescado",
+    vegetarianos: "Vegetarianos",
+  };
+  const categoryIcons = {
+    desayunos: "☀",
+    dulces: "✿",
+    entrantes: "◉",
+    guarniciones: "♨",
+    masas: "⌁",
+    panificadora: "▤",
+    principales: "♨",
+    salsas: "◡",
+  };
+
+  function loadCart() {
+    try {
+      const saved = JSON.parse(localStorage.getItem(cartStorageKey) || "[]");
+      if (!Array.isArray(saved)) return [];
+      return saved.filter((entry) => entry && typeof entry.id === "string" && recipeById.has(entry.recipeId));
+    } catch {
+      return [];
+    }
+  }
+
+  const state = {
+    view: "recipes",
+    category: "all",
+    recipeId: null,
+    search: "",
+    cart: loadCart(),
+  };
+
+  const appShell = document.querySelector("#app-shell");
+  const content = document.querySelector("#content");
+  const pageTitle = document.querySelector("#page-title");
+  const searchBox = document.querySelector("#search-box");
+  const searchInput = document.querySelector("#recipe-search");
+  const mobileCategories = document.querySelector("#mobile-categories");
+
+  function element(tag, className, text) {
+    const node = document.createElement(tag);
+    if (className) node.className = className;
+    if (text !== undefined) node.textContent = text;
+    return node;
+  }
+
+  function actionButton(label, action, className, title = label) {
+    const button = element("button", className, label);
+    button.type = "button";
+    button.dataset.action = action;
+    button.title = title;
+    button.setAttribute("aria-label", title);
+    return button;
+  }
+
+  function categoryKey(recipe) {
+    return recipe.category === "principales" ? `${recipe.category}/${recipe.subcategory}` : recipe.category;
+  }
+
+  function categoryGroups() {
+    const groups = new Map();
+    recipes.forEach((recipe) => {
+      const key = categoryKey(recipe);
+      if (!groups.has(key)) {
+        groups.set(key, {
+          key,
+          category: recipe.category,
+          subcategory: recipe.subcategory,
+          count: 0,
+        });
+      }
+      groups.get(key).count += 1;
+    });
+    const order = ["desayunos", "entrantes", "principales/carne", "principales/pescado", "principales/vegetarianos", "panificadora", "masas", "dulces", "guarniciones", "salsas"];
+    return [...groups.values()].sort((a, b) => {
+      const aOrder = order.indexOf(a.key);
+      const bOrder = order.indexOf(b.key);
+      if (aOrder === -1 && bOrder === -1) return a.key.localeCompare(b.key, "es");
+      return (aOrder === -1 ? order.length : aOrder) - (bOrder === -1 ? order.length : bOrder);
+    });
+  }
+
+  const groups = categoryGroups();
+
+  function groupLabel(group) {
+    const category = categoryLabels[group.category] || group.category;
+    return group.subcategory ? `${category} · ${subcategoryLabels[group.subcategory] || group.subcategory}` : category;
+  }
+
+  function saveCart() {
+    try {
+      localStorage.setItem(cartStorageKey, JSON.stringify(state.cart));
+    } catch {
+      showToast("No se pudo guardar la lista en este navegador.");
+    }
+  }
+
+  function renderTabs(container, desktop = false) {
+    container.replaceChildren();
+    [
+      { view: "recipes", label: "Recetas", icon: "R" },
+      { view: "cart", label: "Lista de la compra", icon: "☷" },
+    ].forEach((tab) => {
+      const button = element("button", `tab-button${state.view === tab.view ? " is-active" : ""}`);
+      button.type = "button";
+      button.dataset.action = tab.view;
+      button.setAttribute("aria-current", state.view === tab.view ? "page" : "false");
+      const icon = element("span", "tab-icon", tab.icon);
+      icon.setAttribute("aria-hidden", "true");
+      if (tab.view === "cart" && state.cart.length) {
+        icon.append(element("span", "tab-badge", String(state.cart.length)));
+      }
+      button.append(icon, element("span", "tab-label", tab.label));
+      if (desktop) button.classList.add("tab-button-desktop");
+      container.append(button);
+    });
+  }
+
+  function renderCategories(container) {
+    container.replaceChildren();
+    const allButton = actionButton("", "category", "category-button", "Mostrar todas las recetas");
+    allButton.dataset.category = "all";
+    allButton.classList.toggle("is-active", state.category === "all");
+    const allIcon = element("span", "category-icon", "✦");
+    allIcon.setAttribute("aria-hidden", "true");
+    allButton.append(allIcon, element("span", "category-name", "Todas las recetas"), element("span", "category-count", String(recipes.length)));
+    container.append(allButton);
+
+    groups.forEach((group) => {
+      const label = groupLabel(group);
+      const button = actionButton("", "category", "category-button", `Filtrar por ${label}`);
+      button.dataset.category = group.key;
+      button.classList.toggle("is-active", state.category === group.key);
+      button.style.setProperty("--icon-bg", iconBackground(group.category));
+      const icon = element("span", "category-icon", categoryIcons[group.category] || "•");
+      icon.setAttribute("aria-hidden", "true");
+      button.append(icon, element("span", "category-name", label), element("span", "category-count", String(group.count)));
+      container.append(button);
+    });
+  }
+
+  function iconBackground(category) {
+    const colors = {
+      desayunos: "#40331e",
+      dulces: "#422738",
+      entrantes: "#203a36",
+      guarniciones: "#3a3d24",
+      masas: "#403823",
+      panificadora: "#49372e",
+      principales: "#493027",
+      salsas: "#3d2d47",
+    };
+    return colors[category] || "#322a40";
+  }
+
+  function normalized(value) {
+    return String(value).toLocaleLowerCase("es").normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  }
+
+  function filteredRecipes() {
+    const query = normalized(state.search.trim());
+    return recipes.filter((recipe) => {
+      const inCategory = state.category === "all" || categoryKey(recipe) === state.category;
+      if (!inCategory) return false;
+      if (!query) return true;
+      const searchable = [recipe.title, ...recipe.ingredients, ...recipe.tags].join(" ");
+      return normalized(searchable).includes(query);
+    });
+  }
+
+  function recipeCategoryText(recipe) {
+    const group = groups.find((item) => item.key === categoryKey(recipe));
+    return group ? groupLabel(group) : categoryLabels[recipe.category] || recipe.category;
+  }
+
+  function renderRecipeList() {
+    const visible = filteredRecipes();
+    const heading = element("div", "section-heading");
+    const text = element("div");
+    const title = state.category === "all" ? "Todas las recetas" : (groups.find((group) => group.key === state.category) ? groupLabel(groups.find((group) => group.key === state.category)) : "Recetas");
+    text.append(element("h2", "", title));
+    text.append(element("p", "", state.search ? "Resultados de búsqueda" : "Ideas para cocinar hoy"));
+    heading.append(text, element("span", "result-count", `${visible.length} ${visible.length === 1 ? "receta" : "recetas"}`));
+    content.append(heading);
+
+    if (!visible.length) {
+      const empty = element("div", "empty-state");
+      empty.append(element("strong", "", "No encontramos recetas"), element("span", "", "Prueba con otro nombre, ingrediente o etiqueta."));
+      content.append(empty);
+      return;
+    }
+
+    const list = element("div", "recipe-list");
+    visible.forEach((recipe) => {
+      const row = element("article", "recipe-row");
+      const open = actionButton("", "open-recipe", "recipe-open", `Ver ${recipe.title}`);
+      open.dataset.recipeId = recipe.id;
+      const mark = element("span", "recipe-mark", recipe.title.trim().charAt(0).toLocaleUpperCase("es"));
+      mark.setAttribute("aria-hidden", "true");
+      const copy = element("span", "recipe-copy");
+      copy.append(element("span", "recipe-title", recipe.title));
+      copy.append(element("span", "recipe-meta", recipeCategoryText(recipe)));
+      open.append(mark, copy, element("span", "recipe-chevron", "›"));
+      const add = actionButton("Añadir", "add-recipe", "add-button", `Añadir ${recipe.title} a la lista de la compra`);
+      add.dataset.recipeId = recipe.id;
+      row.append(open, add);
+      list.append(row);
+    });
+    content.append(list);
+  }
+
+  function appendDetailSection(parent, title, items, ordered = false, extraClass = "") {
+    if (!items.length) return;
+    const section = element("section", `detail-section${extraClass ? ` ${extraClass}` : ""}`);
+    section.append(element("h3", "", title));
+    const list = element(ordered ? "ol" : "ul", `detail-list${extraClass ? ` ${extraClass}-list` : ""}`);
+    items.forEach((item) => list.append(element("li", "", item)));
+    section.append(list);
+    parent.append(section);
+  }
+
+  function renderRecipeDetail(recipe) {
+    const detail = element("article", "recipe-detail");
+    const topLine = element("div", "detail-topline");
+    topLine.append(actionButton("‹ Volver", "back-to-list", "back-button", "Volver a las recetas"));
+    const actions = element("div", "detail-actions");
+    const add = actionButton("Añadir al carrito", "add-recipe", "add-button", `Añadir ${recipe.title} a la lista de la compra`);
+    add.dataset.recipeId = recipe.id;
+    actions.append(add);
+    topLine.append(actions);
+    detail.append(topLine);
+    detail.append(element("h2", "detail-title", recipe.title));
+
+    const facts = element("div", "detail-facts");
+    facts.append(element("span", "", `Raciones: ${recipe.servings}`));
+    facts.append(element("span", "", recipeCategoryText(recipe)));
+    detail.append(facts);
+
+    if (recipe.tags.length) {
+      const tags = element("div", "tag-list");
+      recipe.tags.forEach((tag) => tags.append(element("span", "tag", tag)));
+      detail.append(tags);
+    }
+    appendDetailSection(detail, "Ingredientes", recipe.ingredients);
+    appendDetailSection(detail, "Utensilios", recipe.utensils);
+    appendDetailSection(detail, "Pasos", recipe.steps, true);
+    appendDetailSection(detail, "Notas", recipe.notes, false, "notes");
+    content.append(detail);
+  }
+
+  function makeEntryId() {
+    if (globalThis.crypto && typeof globalThis.crypto.randomUUID === "function") return globalThis.crypto.randomUUID();
+    return `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+  }
+
+  function renderCart() {
+    const header = element("div", "cart-header");
+    header.append(element("h2", "", "Recetas incluidas e ingredientes"));
+    const clear = actionButton("Vaciar lista", "clear-cart", "text-button", "Vaciar la lista de la compra");
+    clear.disabled = state.cart.length === 0;
+    header.append(clear);
+    content.append(header);
+
+    if (!state.cart.length) {
+      const empty = element("div", "cart-empty");
+      empty.append(element("span", "cart-empty-icon", "☷"));
+      empty.append(element("h3", "", "Tu lista está vacía"));
+      empty.append(element("p", "", "Añade una receta y sus ingredientes aparecerán aquí, agrupados por receta."));
+      content.append(empty);
+      return;
+    }
+
+    const list = element("div", "cart-list");
+    state.cart.forEach((entry) => {
+      const recipe = recipeById.get(entry.recipeId);
+      if (!recipe) return;
+      const card = element("article", "cart-entry");
+      const heading = element("div", "cart-entry-header");
+      const headingCopy = element("div");
+      const open = actionButton(`1× ${recipe.title}`, "open-recipe", "cart-entry-title", `Ver ${recipe.title}`);
+      open.dataset.recipeId = recipe.id;
+      headingCopy.append(open, element("span", "cart-entry-path", recipe.path));
+      const remove = actionButton("×", "remove-recipe", "icon-button", `Quitar ${recipe.title} de la lista`);
+      remove.dataset.entryId = entry.id;
+      heading.append(headingCopy, remove);
+      card.append(heading);
+
+      const body = element("div", "cart-entry-body");
+      body.append(element("p", "cart-entry-label", `Adición: ${recipe.title}`));
+      const ingredients = element("ul", "cart-ingredients");
+      recipe.ingredients.forEach((item) => ingredients.append(element("li", "", item)));
+      body.append(ingredients);
+      card.append(body);
+      list.append(card);
+    });
+    content.append(list);
+  }
+
+  let toastTimer;
+  function showToast(message) {
+    let toast = document.querySelector(".toast");
+    if (!toast) {
+      toast = element("div", "toast");
+      toast.setAttribute("role", "status");
+      document.body.append(toast);
+    }
+    toast.textContent = message;
+    toast.hidden = false;
+    window.clearTimeout(toastTimer);
+    toastTimer = window.setTimeout(() => { toast.hidden = true; }, 2400);
+  }
+
+  function render() {
+    renderTabs(document.querySelector("#desktop-tabs"), true);
+    renderTabs(document.querySelector("#mobile-tabs"));
+    renderCategories(document.querySelector("#desktop-categories"));
+    renderCategories(document.querySelector("#mobile-category-list"));
+    document.querySelector("#recipe-count").textContent = `${recipes.length} recetas en la colección`;
+    appShell.classList.toggle("is-focused", state.view === "cart" || Boolean(state.recipeId));
+    mobileCategories.hidden = state.view === "cart" || Boolean(state.recipeId);
+    searchBox.hidden = state.view === "cart" || Boolean(state.recipeId);
+    content.replaceChildren();
+
+    if (state.view === "cart") {
+      pageTitle.textContent = "Lista de la compra";
+      document.title = "Lista de la compra · Recetas";
+      renderCart();
+      return;
+    }
+
+    if (state.recipeId && recipeById.has(state.recipeId)) {
+      const recipe = recipeById.get(state.recipeId);
+      pageTitle.textContent = recipe.title;
+      document.title = `${recipe.title} · Recetas`;
+      renderRecipeDetail(recipe);
+      return;
+    }
+
+    state.recipeId = null;
+    pageTitle.textContent = "Recetas";
+    document.title = "Recetas";
+    renderRecipeList();
+  }
+
+  function addRecipe(recipeId) {
+    if (!recipeById.has(recipeId)) return;
+    state.cart.push({ id: makeEntryId(), recipeId });
+    saveCart();
+    render();
+    showToast("Receta añadida a la lista de la compra.");
+  }
+
+  document.addEventListener("click", (event) => {
+    const button = event.target.closest("[data-action]");
+    if (!button) return;
+    const { action, category, recipeId, entryId } = button.dataset;
+
+    if (action === "recipes") {
+      state.view = "recipes";
+      state.recipeId = null;
+      render();
+    } else if (action === "cart") {
+      state.view = "cart";
+      state.recipeId = null;
+      render();
+    } else if (action === "category") {
+      state.view = "recipes";
+      state.recipeId = null;
+      state.category = category || "all";
+      const details = mobileCategories.querySelector("details");
+      if (details && window.matchMedia("(max-width: 759px)").matches) details.open = false;
+      render();
+    } else if (action === "open-recipe") {
+      state.view = "recipes";
+      state.recipeId = recipeId;
+      render();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    } else if (action === "add-recipe") {
+      addRecipe(recipeId);
+    } else if (action === "back-to-list") {
+      state.recipeId = null;
+      render();
+    } else if (action === "remove-recipe") {
+      state.cart = state.cart.filter((entry) => entry.id !== entryId);
+      saveCart();
+      render();
+    } else if (action === "clear-cart") {
+      state.cart = [];
+      saveCart();
+      render();
+      showToast("Lista vaciada.");
+    }
+  });
+
+  searchInput.addEventListener("input", () => {
+    state.search = searchInput.value;
+    render();
+    searchInput.focus();
+    searchInput.setSelectionRange(searchInput.value.length, searchInput.value.length);
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") {
+      event.preventDefault();
+      searchInput.focus();
+    }
+    if (event.key === "/" && !["INPUT", "TEXTAREA"].includes(document.activeElement.tagName)) {
+      event.preventDefault();
+      searchInput.focus();
+    }
+    if (event.key === "Escape" && state.recipeId) {
+      state.recipeId = null;
+      render();
+    }
+  });
+
+  render();
+})();

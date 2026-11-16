@@ -11,7 +11,7 @@ Este repositorio es una colección canónica de recetas. Prioriza legibilidad hu
 ## Reglas de recetas
 
 - Una receta por fichero en `<categoria>/<nombre>.md`. Para `principales`, usa `principales/<subcategoria>/<nombre>.md`.
-- Categorías permitidas: `entrantes`, `principales`, `panificadora`, `masas`, `dulces`, `guarniciones`, `salsas`.
+- Categorías permitidas: `desayunos`, `entrantes`, `principales`, `panificadora`, `masas`, `dulces`, `guarniciones`, `salsas`.
 - Subcategorías permitidas para `principales`: `carne`, `pescado`, `vegetarianos`.
 - Usa exactamente el YAML y orden de secciones Markdown definido en `README.md`.
 - Nombre de fichero: minúsculas sin tildes, números y guiones. No uses espacios ni guiones bajos.
@@ -27,6 +27,13 @@ Este repositorio es una colección canónica de recetas. Prioriza legibilidad hu
 - Al modificar receta, conserva toda información existente salvo petición explícita para eliminarla.
 - No hagas commit, push, abras pull requests ni cambies configuración Git sin petición explícita.
 - En este repositorio, trabaja siempre en la rama `main`; nunca crees ramas.
+
+## Web de recetas
+
+- Las recetas Markdown son la fuente canónica del navegador web.
+- Genera el sitio con `python3 scripts/generate_site.py`. La plantilla, los estilos y el JavaScript viven en `site/`; el resultado se escribe en `docs/`.
+- El workflow de GitHub Actions despliega `docs/` a GitHub Pages cuando hay un push a `main`.
+- No edites a mano los ficheros generados en `docs/`; vuelve a ejecutar el generador.
 
 ## Validación
 

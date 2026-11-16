@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#15131a">
+    <meta name="description" content="Recetas para cocinar cada día.">
+    <title>Recetas</title>
+    <link rel="stylesheet" href="assets/styles.css">
+  </head>
+  <body>
+    <script id="recipe-data" type="application/json">{{RECIPES_JSON}}</script>
+    <div class="app-shell" id="app-shell">
+      <aside class="sidebar" aria-label="Navegación principal">
+        <a class="brand" href="#recetas" data-action="recipes" aria-label="Ir a recetas">
+          <span class="brand-mark" aria-hidden="true">R</span>
+          <span>Recetas</span>
+        </a>
+        <div class="sidebar-nav" id="desktop-tabs"></div>
+        <div class="sidebar-divider"></div>
+        <p class="sidebar-label">Categorías</p>
+        <nav class="category-nav" id="desktop-categories" aria-label="Categorías de recetas"></nav>
+        <p class="sidebar-count" id="recipe-count"></p>
+      </aside>
+
+      <main class="main-panel">
+        <header class="topbar">
+          <div class="topbar-title">
+            <p class="eyebrow">TU RECETARIO</p>
+            <h1 id="page-title">Recetas</h1>
+          </div>
+          <label class="search-box" id="search-box">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.6"></circle><path d="m16 16 4.2 4.2"></path></svg>
+            <input id="recipe-search" type="search" placeholder="Buscar recetas o ingredientes" autocomplete="off">
+            <span class="search-shortcut" aria-hidden="true">⌘ K</span>
+          </label>
+        </header>
+
+        <section class="mobile-categories" id="mobile-categories" aria-label="Categorías">
+          <details open>
+            <summary>Explorar categorías <span class="summary-chevron" aria-hidden="true">⌄</span></summary>
+            <nav class="category-nav category-nav-mobile" id="mobile-category-list"></nav>
+          </details>
+        </section>
+
+        <section class="content" id="content" aria-live="polite"></section>
+      </main>
+    </div>
+
+    <nav class="bottom-nav" id="mobile-tabs" aria-label="Navegación inferior"></nav>
+    <script src="assets/app.js" defer></script>
+  </body>
+</html>
