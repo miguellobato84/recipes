@@ -71,7 +71,7 @@ raciones: 4
 
 El repositorio incluye un navegador web estático generado a partir de las recetas Markdown. Permite explorar por categorías, buscar recetas y guardar ingredientes en una lista de la compra que persiste en el navegador. Para regenerarlo localmente:
 
-Sitio público: [Recetas](https://miguellobato84.github.io/recipes/).
+Sitio público: [Recetas](https://www.miguellobato.com/recipes/).
 
 ```sh
 python3 scripts/generate_site.py
@@ -79,7 +79,7 @@ python3 scripts/generate_site.py
 
 Abre `docs/index.html` en un navegador o sirve la carpeta `docs/` con un servidor estático. El generador solo usa la biblioteca estándar de Python. Edita la plantilla en `site/template.html`, los estilos en `site/styles.css` y las interacciones en `site/app.js`; no edites a mano los ficheros generados en `docs/`.
 
-GitHub Actions vuelve a generar y despliega `docs/` a GitHub Pages en cada push a `main`. El workflow configura Pages para publicar mediante Actions. El enlace de publicación aparece en la ejecución del workflow.
+GitHub Pages está configurado para publicar mediante Actions. El workflow vuelve a generar y despliega `docs/` en cada push a `main`.
 
 ## Flujo de Git
 
