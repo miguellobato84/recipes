@@ -205,11 +205,18 @@ def render_recipe_page(recipe: dict[str, object]) -> str:
         for item in ingredients
     )
     ingredient_section = f"""<section class="detail-section"><h2>Ingredientes</h2>
-          <label class="multiplier-control">
-            <span class="multiplier-label">Multiplicador</span>
-            <input class="multiplier-input" type="text" inputmode="decimal" value="1" data-static-recipe-multiplier aria-label="Multiplicador de ingredientes">
-            <span class="multiplier-suffix">×</span>
-          </label>
+          <div class="multiplier-control">
+            <label class="multiplier-input-label">
+              <span class="multiplier-label">Multiplicador</span>
+              <input class="multiplier-input" type="text" inputmode="decimal" value="1" data-static-recipe-multiplier aria-label="Multiplicador de ingredientes">
+              <span class="multiplier-suffix">×</span>
+            </label>
+            <div class="multiplier-presets" role="group" aria-label="Multiplicador: valores predeterminados">
+              <button class="multiplier-preset is-active" type="button" data-static-multiplier-value="1" aria-pressed="true">1×</button>
+              <button class="multiplier-preset" type="button" data-static-multiplier-value="2" aria-pressed="false">2×</button>
+              <button class="multiplier-preset" type="button" data-static-multiplier-value="3" aria-pressed="false">3×</button>
+            </div>
+          </div>
           <ul class="detail-list">
 {ingredient_entries}
           </ul>

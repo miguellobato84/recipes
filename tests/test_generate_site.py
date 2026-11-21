@@ -17,6 +17,9 @@ class StaticRecipeMultiplierTests(unittest.TestCase):
 
         self.assertIn('data-static-recipe-multiplier', page)
         self.assertIn('data-base-ingredient="0,5 limón"', page)
+        self.assertIn('data-static-multiplier-value="1"', page)
+        self.assertIn('data-static-multiplier-value="2"', page)
+        self.assertIn('data-static-multiplier-value="3"', page)
         self.assertIn('../../assets/multiplier.js', page)
         self.assertIn('../../assets/recipe.js', page)
 

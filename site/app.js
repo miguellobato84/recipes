@@ -67,7 +67,8 @@
   }
 
   function multiplierControl(labelText, value, attributes = {}) {
-    const label = element("label", "multiplier-control");
+    const control = element("div", "multiplier-control");
+    const label = element("label", "multiplier-input-label");
     label.append(element("span", "multiplier-label", labelText));
     const input = element("input", "multiplier-input");
     input.type = "text";
@@ -78,7 +79,22 @@
       input.dataset[key] = attributeValue;
     });
     label.append(input, element("span", "multiplier-suffix", "×"));
-    return label;
+    control.append(label);
+
+    const presets = element("div", "multiplier-presets");
+    presets.setAttribute("role", "group");
+    presets.setAttribute("aria-label", `${labelText}: valores predeterminados`);
+    ["1", "2", "3"].forEach((factor) => {
+      const button = actionButton(`${factor}×`, "multiplier-preset", `multiplier-preset${recipeMultiplier.normalize(value) === factor ? " is-active" : ""}`, `Usar multiplicador ${factor}×`);
+      button.dataset.multiplierValue = factor;
+      button.setAttribute("aria-pressed", recipeMultiplier.normalize(value) === factor ? "true" : "false");
+      Object.entries(attributes).forEach(([key, attributeValue]) => {
+        button.dataset[key] = attributeValue;
+      });
+      presets.append(button);
+    });
+    control.append(presets);
+    return control;
   }
 
   function actionButton(label, action, className, title = label) {
@@ -470,6 +486,13 @@
     const button = event.target.closest("[data-action]");
     if (!button) return;
     const { action, category, recipeId, entryId } = button.dataset;
+    if (action === "multiplier-preset") {
+      const input = button.closest(".multiplier-control")?.querySelector(".multiplier-input");
+      if (!input) return;
+      input.value = button.dataset.multiplierValue;
+      input.dispatchEvent(new Event("change", { bubbles: true }));
+      return;
+    }
     if (action === "home") event.preventDefault();
 
     if (action === "recipes") {
