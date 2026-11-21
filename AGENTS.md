@@ -34,6 +34,7 @@ Este repositorio es una colección canónica de recetas. Prioriza legibilidad hu
 - Las recetas Markdown son la fuente canónica del navegador web.
 - El multiplicador del navegador actúa solo sobre números en líneas de ingredientes. Escala todos los números salvo porcentajes, que no se escalan; usa decimales y rangos numéricos, no fracciones con barra.
 - Cada categoría y subcategoría del navegador tiene su propia URL. La navegación no debe ofrecer una vista que mezcle todas las recetas.
+- Al seleccionar una categoría, muestra sus recetas debajo de ella en forma de árbol de navegación.
 - Genera el sitio con `python3 scripts/generate_site.py`. La plantilla, los estilos y el JavaScript viven en `site/`; el resultado se escribe en `docs/`.
 - El workflow de GitHub Actions despliega `docs/` a GitHub Pages cuando hay un push a `main`.
 - No edites a mano los ficheros generados en `docs/`; vuelve a ejecutar el generador.

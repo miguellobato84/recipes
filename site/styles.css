@@ -87,6 +87,8 @@ button:focus-visible, a:focus-visible, input:focus-visible, summary:focus-visibl
 .category-nav-mobile { display: grid; grid-template-columns: 1fr; padding: 0 8px 8px; }
 
 .category-nav { display: grid; gap: 4px; }
+.category-tree, .category-recipe-tree { display: grid; gap: 3px; margin: 0; padding: 0; list-style: none; }
+.category-tree-node { min-width: 0; }
 .category-button, .tab-button {
   display: flex;
   width: 100%;
@@ -106,6 +108,9 @@ button:focus-visible, a:focus-visible, input:focus-visible, summary:focus-visibl
 .category-icon { display: grid; width: 32px; height: 32px; flex: 0 0 auto; place-items: center; border-radius: 10px; background: var(--icon-bg, #322a40); font-size: 1rem; }
 .category-name { min-width: 0; flex: 1; }
 .category-count { color: var(--subtle); font-size: .75rem; }
+.category-recipe-tree { gap: 1px; margin: 2px 0 8px 24px; padding: 3px 0 3px 12px; border-left: 1px solid var(--line); }
+.category-recipe-link { display: block; overflow: hidden; padding: 7px 9px; border-radius: 8px; color: var(--muted); font-size: .82rem; line-height: 1.35; text-decoration: none; text-overflow: ellipsis; }
+.category-recipe-link:hover { background: var(--panel-hover); color: var(--text); }
 .category-arrow { color: var(--subtle); font-size: .85rem; }
 
 .content { width: min(100%, var(--content-width)); margin: 0 auto; padding: 25px clamp(20px, 5vw, 64px) 48px; }

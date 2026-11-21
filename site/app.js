@@ -178,9 +178,11 @@
 
   function renderCategories(container) {
     container.replaceChildren();
+    const tree = element("ul", "category-tree");
     groups.forEach((group) => {
       const label = groupLabel(group);
       const selected = state.category === group.key;
+      const node = element("li", `category-tree-node${selected ? " is-expanded" : ""}`);
       const button = element("a", `category-button${selected ? " is-active" : ""}`);
       button.href = categoryUrl(group);
       button.setAttribute("aria-current", selected ? "page" : "false");
@@ -189,8 +191,23 @@
       const icon = element("span", "category-icon", categoryIcons[group.category] || "•");
       icon.setAttribute("aria-hidden", "true");
       button.append(icon, element("span", "category-name", label), element("span", "category-count", String(group.count)));
-      container.append(button);
+      node.append(button);
+
+      if (selected) {
+        const children = element("ul", "category-recipe-tree");
+        recipes.filter((recipe) => categoryKey(recipe) === group.key).forEach((recipe) => {
+          const child = element("li", "category-recipe-node");
+          const recipeLink = element("a", "category-recipe-link", recipe.title);
+          recipeLink.href = recipeUrl(recipe);
+          child.append(recipeLink);
+          children.append(child);
+        });
+        node.append(children);
+      }
+
+      tree.append(node);
     });
+    container.append(tree);
   }
 
   function iconBackground(category) {
