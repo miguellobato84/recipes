@@ -70,7 +70,7 @@ raciones: 4
 
 ## Navegador web
 
-El repositorio incluye un navegador web estático generado a partir de las recetas Markdown. Permite explorar por categorías, buscar recetas y guardar ingredientes en una lista de la compra que persiste en el navegador. El multiplicador de una receta escala los números de sus ingredientes, excepto porcentajes. Cada receta del carrito empieza en `1×` y tiene un multiplicador independiente.
+El repositorio incluye un navegador web estático generado a partir de las recetas Markdown. Cada categoría y subcategoría tiene una URL propia y muestra solo sus recetas; no hay una vista que mezcle todas las recetas. El navegador permite buscar recetas y guardar ingredientes en una lista de la compra que persiste en el navegador. El multiplicador de una receta escala los números de sus ingredientes, excepto porcentajes. Cada receta del carrito empieza en `1×` y tiene un multiplicador independiente.
 
 Para regenerarlo localmente:
 

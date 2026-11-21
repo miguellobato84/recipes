@@ -6,9 +6,9 @@
     <meta name="theme-color" content="#15131a">
     <meta name="description" content="Recetas para cocinar cada día.">
     <title>Recetas</title>
-    <link rel="stylesheet" href="assets/styles.css">
+    <link rel="stylesheet" href="{{ASSET_PREFIX}}assets/styles.css">
   </head>
-  <body>
+  <body data-asset-prefix="{{ASSET_PREFIX}}" data-initial-category="{{INITIAL_CATEGORY}}">
     <script id="recipe-data" type="application/json">{{RECIPES_JSON}}</script>
     <div class="app-shell" id="app-shell">
       <aside class="sidebar" aria-label="Navegación principal">
@@ -48,7 +48,7 @@
     </div>
 
     <nav class="bottom-nav" id="mobile-tabs" aria-label="Navegación inferior"></nav>
-    <script src="assets/multiplier.js" defer></script>
-    <script src="assets/app.js" defer></script>
+    <script src="{{ASSET_PREFIX}}assets/multiplier.js" defer></script>
+    <script src="{{ASSET_PREFIX}}assets/app.js" defer></script>
   </body>
 </html>

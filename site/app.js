@@ -5,6 +5,9 @@
   const recipeById = new Map(recipes.map((recipe) => [recipe.id, recipe]));
   const cartStorageKey = "recetas-carrito-v1";
   const recipeMultiplier = window.recipeMultiplier;
+  const assetPrefix = document.body.dataset.assetPrefix || "";
+  const initialCategory = document.body.dataset.initialCategory || null;
+  const hasCategoryChooserHash = window.location.hash === "#categorias";
   const categoryLabels = {
     desayunos: "Desayunos",
     entrantes: "Entrantes",
@@ -44,8 +47,8 @@
   }
 
   const state = {
-    view: "home",
-    category: "all",
+    view: initialCategory || hasCategoryChooserHash ? "recipes" : "home",
+    category: initialCategory,
     recipeId: null,
     search: "",
     cart: loadCart(),
@@ -140,6 +143,10 @@
     return group.subcategory ? `${category} · ${subcategoryLabels[group.subcategory] || group.subcategory}` : category;
   }
 
+  function categoryUrl(group) {
+    return `${assetPrefix}${group.key}/`;
+  }
+
   function saveCart() {
     try {
       localStorage.setItem(cartStorageKey, JSON.stringify(state.cart));
@@ -171,19 +178,13 @@
 
   function renderCategories(container) {
     container.replaceChildren();
-    const allButton = actionButton("", "category", "category-button", "Mostrar todas las recetas");
-    allButton.dataset.category = "all";
-    allButton.classList.toggle("is-active", state.category === "all");
-    const allIcon = element("span", "category-icon", "✦");
-    allIcon.setAttribute("aria-hidden", "true");
-    allButton.append(allIcon, element("span", "category-name", "Todas las recetas"), element("span", "category-count", String(recipes.length)));
-    container.append(allButton);
-
     groups.forEach((group) => {
       const label = groupLabel(group);
-      const button = actionButton("", "category", "category-button", `Filtrar por ${label}`);
-      button.dataset.category = group.key;
-      button.classList.toggle("is-active", state.category === group.key);
+      const selected = state.category === group.key;
+      const button = element("a", `category-button${selected ? " is-active" : ""}`);
+      button.href = categoryUrl(group);
+      button.setAttribute("aria-current", selected ? "page" : "false");
+      button.setAttribute("aria-label", `Abrir categoría ${label}`);
       button.style.setProperty("--icon-bg", iconBackground(group.category));
       const icon = element("span", "category-icon", categoryIcons[group.category] || "•");
       icon.setAttribute("aria-hidden", "true");
@@ -213,7 +214,7 @@
   function filteredRecipes() {
     const query = normalized(state.search.trim());
     return recipes.filter((recipe) => {
-      const inCategory = state.category === "all" || categoryKey(recipe) === state.category;
+      const inCategory = !state.category || categoryKey(recipe) === state.category;
       if (!inCategory) return false;
       if (!query) return true;
       const searchable = [recipe.title, ...recipe.ingredients, ...recipe.tags].join(" ");
@@ -226,13 +227,38 @@
     return group ? groupLabel(group) : categoryLabels[recipe.category] || recipe.category;
   }
 
+  function renderCategoryChooser() {
+    pageTitle.textContent = "Categorías";
+    document.title = "Categorías · Recetas";
+    const heading = element("div", "section-heading");
+    heading.append(element("h2", "", "Elige una categoría"));
+    content.append(heading);
+
+    const chooser = element("div", "category-chooser");
+    groups.forEach((group) => {
+      const link = element("a", "category-chooser-link", groupLabel(group));
+      link.href = categoryUrl(group);
+      link.append(element("span", "category-count", String(group.count)));
+      chooser.append(link);
+    });
+    content.append(chooser);
+  }
+
   function renderRecipeList() {
+    if (!state.category && !state.search.trim()) {
+      renderCategoryChooser();
+      return;
+    }
+
     const visible = filteredRecipes();
     const heading = element("div", "section-heading");
     const text = element("div");
-    const title = state.category === "all" ? "Todas las recetas" : (groups.find((group) => group.key === state.category) ? groupLabel(groups.find((group) => group.key === state.category)) : "Recetas");
+    const selectedGroup = groups.find((group) => group.key === state.category);
+    const title = selectedGroup ? groupLabel(selectedGroup) : "Resultados de búsqueda";
     text.append(element("h2", "", title));
     text.append(element("p", "", state.search ? "Resultados de búsqueda" : "Ideas para cocinar hoy"));
+    pageTitle.textContent = title;
+    document.title = `${title} · Recetas`;
     heading.append(text, element("span", "result-count", `${visible.length} ${visible.length === 1 ? "receta" : "recetas"}`));
     content.append(heading);
 
@@ -306,7 +332,11 @@
   }
 
   function recipeUrl(recipe) {
-    return recipe.url;
+    return `${assetPrefix}${recipe.url}`;
+  }
+
+  function appRootUrl() {
+    return `${assetPrefix}index.html`;
   }
 
   function clearRecipeRoute() {
@@ -342,9 +372,9 @@
     home.append(categoryHeading);
     const categoryLinks = element("div", "home-categories");
     groups.forEach((group) => {
-      const button = actionButton(groupLabel(group), "category", "home-category");
-      button.dataset.category = group.key;
-      categoryLinks.append(button);
+      const link = element("a", "home-category", groupLabel(group));
+      link.href = categoryUrl(group);
+      categoryLinks.append(link);
     });
     home.append(categoryLinks);
     content.append(home);
@@ -485,7 +515,7 @@
   document.addEventListener("click", (event) => {
     const button = event.target.closest("[data-action]");
     if (!button) return;
-    const { action, category, recipeId, entryId } = button.dataset;
+    const { action, recipeId, entryId } = button.dataset;
     if (action === "multiplier-preset") {
       const input = button.closest(".multiplier-control")?.querySelector(".multiplier-input");
       if (!input) return;
@@ -496,33 +526,18 @@
     if (action === "home") event.preventDefault();
 
     if (action === "recipes") {
-      state.view = "recipes";
-      state.recipeId = null;
-      clearRecipeRoute();
-      render();
+      window.location.href = `${appRootUrl()}#categorias`;
     } else if (action === "home") {
-      state.view = "home";
-      state.recipeId = null;
-      state.search = "";
-      searchInput.value = "";
-      clearRecipeRoute();
-      render();
+      window.location.href = appRootUrl();
     } else if (action === "browse-recipes") {
       state.view = "recipes";
+      state.category = null;
       state.recipeId = null;
       render();
     } else if (action === "cart") {
       state.view = "cart";
       state.recipeId = null;
       clearRecipeRoute();
-      render();
-    } else if (action === "category") {
-      state.view = "recipes";
-      state.recipeId = null;
-      clearRecipeRoute();
-      state.category = category || "all";
-      const details = mobileCategories.querySelector("details");
-      if (details && window.matchMedia("(max-width: 759px)").matches) details.open = false;
       render();
     } else if (action === "open-recipe") {
       state.view = "recipes";
@@ -587,7 +602,8 @@
   if (state.recipeId) state.view = "recipes";
   function syncLocation() {
     state.recipeId = recipeFromLocation();
-    state.view = state.recipeId ? "recipes" : "home";
+    state.view = state.recipeId || initialCategory || window.location.hash === "#categorias" ? "recipes" : "home";
+    state.category = initialCategory;
     render();
   }
   window.addEventListener("popstate", syncLocation);

@@ -262,6 +262,15 @@ def render_recipe_page(recipe: dict[str, object]) -> str:
 """
 
 
+def category_keys(recipes: list[dict[str, object]]) -> list[str]:
+    return sorted(
+        {
+            f"{recipe['category']}/{recipe['subcategory']}" if recipe["subcategory"] else str(recipe["category"])
+            for recipe in recipes
+        }
+    )
+
+
 def write_recipe_pages(recipes: list[dict[str, object]]) -> None:
     sitemap_urls = [PUBLIC_BASE_URL]
     for recipe in recipes:
@@ -269,6 +278,7 @@ def write_recipe_pages(recipes: list[dict[str, object]]) -> None:
         page_dir.mkdir(parents=True, exist_ok=True)
         (page_dir / "index.html").write_text(render_recipe_page(recipe), encoding="utf-8")
         sitemap_urls.append(PUBLIC_BASE_URL + str(recipe["url"]))
+    sitemap_urls.extend(PUBLIC_BASE_URL + category_key + "/" for category_key in category_keys(recipes))
 
     entries = "\n".join(f"  <url><loc>{escape(url)}</loc></url>" for url in sitemap_urls)
     sitemap = (
@@ -283,6 +293,26 @@ def write_recipe_pages(recipes: list[dict[str, object]]) -> None:
     )
 
 
+def render_app_page(template: str, recipes: list[dict[str, object]], asset_prefix: str = "", initial_category: str = "") -> str:
+    data = json.dumps(recipes, ensure_ascii=False, separators=(",", ":"))
+    data = data.replace("&", "\\u0026").replace("<", "\\u003c").replace(">", "\\u003e")
+    return (
+        template.replace("{{ASSET_PREFIX}}", asset_prefix)
+        .replace("{{INITIAL_CATEGORY}}", html.escape(initial_category, quote=True))
+        .replace("{{RECIPES_JSON}}", data)
+    )
+
+
+def write_category_pages(template: str, recipes: list[dict[str, object]]) -> None:
+    for category_key in category_keys(recipes):
+        category_parts = category_key.split("/")
+        page_dir = OUTPUT_DIR.joinpath(*category_parts)
+        page_dir.mkdir(parents=True, exist_ok=True)
+        asset_prefix = "../" * len(category_parts)
+        page = render_app_page(template, recipes, asset_prefix, category_key)
+        (page_dir / "index.html").write_text(page, encoding="utf-8")
+
+
 def main() -> int:
     try:
         recipes = collect_recipes()
@@ -292,10 +322,11 @@ def main() -> int:
         if template.count(marker) != 1:
             raise ValueError(f"{template_path}: se requiere exactamente un marcador {marker}")
 
-        data = json.dumps(recipes, ensure_ascii=False, separators=(",", ":"))
-        data = data.replace("&", "\\u0026").replace("<", "\\u003c").replace(">", "\\u003e")
         OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
-        (OUTPUT_DIR / "index.html").write_text(template.replace(marker, data), encoding="utf-8")
+        if template.count("{{ASSET_PREFIX}}") != 4 or template.count("{{INITIAL_CATEGORY}}") != 1:
+            raise ValueError(f"{template_path}: marcadores de categoría no válidos")
+        (OUTPUT_DIR / "index.html").write_text(render_app_page(template, recipes), encoding="utf-8")
+        write_category_pages(template, recipes)
         write_recipe_pages(recipes)
         assets_dir = OUTPUT_DIR / "assets"
         assets_dir.mkdir(parents=True, exist_ok=True)
