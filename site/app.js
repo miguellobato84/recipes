@@ -4,6 +4,7 @@
   const recipes = JSON.parse(document.querySelector("#recipe-data").textContent);
   const recipeById = new Map(recipes.map((recipe) => [recipe.id, recipe]));
   const cartStorageKey = "recetas-carrito-v1";
+  const recipeMultiplier = window.recipeMultiplier;
   const categoryLabels = {
     desayunos: "Desayunos",
     entrantes: "Entrantes",
@@ -36,7 +37,7 @@
       if (!Array.isArray(saved)) return [];
       return saved
         .filter((entry) => entry && typeof entry.id === "string" && recipeById.has(entry.recipeId))
-        .map((entry) => ({ ...entry, multiplier: normalizeMultiplier(entry.multiplier ?? "1") || "1" }));
+        .map((entry) => ({ ...entry, multiplier: recipeMultiplier.normalize(entry.multiplier ?? "1") || "1" }));
     } catch {
       return [];
     }
@@ -63,53 +64,6 @@
     if (className) node.className = className;
     if (text !== undefined) node.textContent = text;
     return node;
-  }
-
-  function multiplierParts(value) {
-    const normalized = String(value).trim().replace(",", ".");
-    if (!/^\d+(?:\.\d+)?$/.test(normalized)) return null;
-    const [whole, fraction = ""] = normalized.split(".");
-    return {
-      value: BigInt(`${whole}${fraction}`),
-      scale: fraction.length,
-    };
-  }
-
-  function normalizeMultiplier(value) {
-    const canonical = String(value).trim().replace(",", ".");
-    const parts = multiplierParts(canonical);
-    if (!parts || parts.value <= 0n) return null;
-    const [whole, fraction = ""] = canonical.split(".");
-    const trimmedFraction = fraction.replace(/0+$/, "");
-    return trimmedFraction ? `${whole},${trimmedFraction}` : whole;
-  }
-
-  function multiplyDecimals(value, multiplier) {
-    const left = multiplierParts(value);
-    const right = multiplierParts(multiplier);
-    if (!left || !right) return value;
-
-    const scale = left.scale + right.scale;
-    const product = (left.value * right.value).toString().padStart(scale + 1, "0");
-    if (scale === 0) return product;
-
-    const integer = product.slice(0, -scale) || "0";
-    const fraction = product.slice(-scale).replace(/0+$/, "");
-    return fraction ? `${integer},${fraction}` : integer;
-  }
-
-  const ingredientNumberPattern = /(?<![\d/])\d+(?:[.,]\d+)?(?![\d/])/g;
-  const percentagePattern = /(?<![\d/])\d+(?:[.,]\d+)?(?:\s*[-–]\s*\d+(?:[.,]\d+)?)?\s*%/g;
-
-  function scaleIngredient(item, multiplier) {
-    const normalized = normalizeMultiplier(multiplier);
-    if (!normalized || normalized === "1") return item;
-
-    const percentageRanges = [...item.matchAll(percentagePattern)].map((match) => [match.index, match.index + match[0].length]);
-    return item.replace(ingredientNumberPattern, (number, offset) => {
-      const belongsToPercentage = percentageRanges.some(([start, end]) => offset >= start && offset + number.length <= end);
-      return belongsToPercentage ? number : multiplyDecimals(number, normalized);
-    });
   }
 
   function multiplierControl(labelText, value, attributes = {}) {
@@ -328,7 +282,7 @@
       recipe.tags.forEach((tag) => tags.append(element("span", "tag", tag)));
       detail.append(tags);
     }
-    appendDetailSection(detail, "Ingredientes", recipe.ingredients.map((item) => scaleIngredient(item, multiplier)));
+    appendDetailSection(detail, "Ingredientes", recipe.ingredients.map((item) => recipeMultiplier.scaleIngredient(item, multiplier)));
     appendDetailSection(detail, "Utensilios", recipe.utensils);
     appendDetailSection(detail, "Pasos", recipe.steps, true);
     appendDetailSection(detail, "Notas", recipe.notes, false, "notes");
@@ -409,7 +363,7 @@
       const card = element("article", "cart-entry");
       const heading = element("div", "cart-entry-header");
       const headingCopy = element("div");
-      const multiplier = normalizeMultiplier(entry.multiplier) || "1";
+      const multiplier = recipeMultiplier.normalize(entry.multiplier) || "1";
       const open = actionButton(`${multiplier}× ${recipe.title}`, "open-recipe", "cart-entry-title", `Ver ${recipe.title}`);
       open.dataset.recipeId = recipe.id;
       headingCopy.append(open, element("span", "cart-entry-path", recipe.path));
@@ -421,7 +375,7 @@
       const body = element("div", "cart-entry-body");
       body.append(element("p", "cart-entry-label", `Ingredientes a ${multiplier}×`));
       const ingredients = element("ul", "cart-ingredients");
-      recipe.ingredients.forEach((item) => ingredients.append(element("li", "", scaleIngredient(item, multiplier))));
+      recipe.ingredients.forEach((item) => ingredients.append(element("li", "", recipeMultiplier.scaleIngredient(item, multiplier))));
       body.append(ingredients);
       card.append(body);
       list.append(card);
@@ -493,7 +447,7 @@
     const input = event.target;
     if (!(input instanceof HTMLInputElement) || (!input.dataset.recipeMultiplier && !input.dataset.cartEntryMultiplier)) return;
 
-    const multiplier = normalizeMultiplier(input.value);
+    const multiplier = recipeMultiplier.normalize(input.value);
     if (!multiplier) {
       showToast("Introduce un multiplicador decimal mayor que cero.");
       render();

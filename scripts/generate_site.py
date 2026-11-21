@@ -200,6 +200,21 @@ def render_recipe_page(recipe: dict[str, object]) -> str:
             f"{render_list(items, ordered)}\n        </section>"
         )
 
+    ingredient_entries = "\n".join(
+        f'            <li data-base-ingredient="{escape(item)}">{escape(item)}</li>'
+        for item in ingredients
+    )
+    ingredient_section = f"""<section class="detail-section"><h2>Ingredientes</h2>
+          <label class="multiplier-control">
+            <span class="multiplier-label">Multiplicador</span>
+            <input class="multiplier-input" type="text" inputmode="decimal" value="1" data-static-recipe-multiplier aria-label="Multiplicador de ingredientes">
+            <span class="multiplier-suffix">×</span>
+          </label>
+          <ul class="detail-list">
+{ingredient_entries}
+          </ul>
+        </section>"""
+
     return f"""<!doctype html>
 <html lang="es">
   <head>
@@ -227,12 +242,14 @@ def render_recipe_page(recipe: dict[str, object]) -> str:
           <span>Raciones: {escape(recipe["servings"])}</span>
           <span>{escape(category_label)}</span>
         </div>
-        {section("Ingredientes", ingredients)}
+        {ingredient_section}
         {section("Utensilios", utensils)}
         {section("Pasos", steps, ordered=True)}
         {section("Notas", notes)}
       </article>
     </main>
+    <script src="{asset_prefix}assets/multiplier.js" defer></script>
+    <script src="{asset_prefix}assets/recipe.js" defer></script>
   </body>
 </html>
 """
@@ -276,7 +293,9 @@ def main() -> int:
         assets_dir = OUTPUT_DIR / "assets"
         assets_dir.mkdir(parents=True, exist_ok=True)
         shutil.copyfile(SITE_DIR / "styles.css", assets_dir / "styles.css")
+        shutil.copyfile(SITE_DIR / "multiplier.js", assets_dir / "multiplier.js")
         shutil.copyfile(SITE_DIR / "app.js", assets_dir / "app.js")
+        shutil.copyfile(SITE_DIR / "recipe.js", assets_dir / "recipe.js")
         print(f"Generadas {len(recipes)} páginas de receta y un sitemap en {OUTPUT_DIR.relative_to(ROOT)}")
         return 0
     except (OSError, ValueError) as error:
