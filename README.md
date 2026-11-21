@@ -65,11 +65,14 @@ raciones: 4
 - Markdown: un H1 que coincida con `titulo`; secciones H2 `Ingredientes`, `Utensilios`, `Pasos` y `Notas`, en ese orden.
 - Ingredientes: lista sin orden. Indica cantidad, unidad, ingrediente y detalle de preparación.
 - Todas las cantidades medibles se expresan preferentemente en masa, usando g o kg. Solo usa ml o l cuando no sea razonable expresar la cantidad en masa. No uses cucharaditas, cucharadas, tazas u otras medidas caseras.
+- Escribe las cantidades con cifras, no con palabras. Usa decimales con coma para cantidades fraccionarias; no uses fracciones con barra como `1/2`.
 - Pasos: lista ordenada. Cada paso contiene una acción observable; incluye temperatura, tiempo e indicios visuales cuando se conozcan.
 
 ## Navegador web
 
-El repositorio incluye un navegador web estático generado a partir de las recetas Markdown. Permite explorar por categorías, buscar recetas y guardar ingredientes en una lista de la compra que persiste en el navegador. Para regenerarlo localmente:
+El repositorio incluye un navegador web estático generado a partir de las recetas Markdown. Permite explorar por categorías, buscar recetas y guardar ingredientes en una lista de la compra que persiste en el navegador. El multiplicador de una receta escala los números de sus ingredientes, excepto porcentajes. Cada receta del carrito empieza en `1×` y tiene un multiplicador independiente.
+
+Para regenerarlo localmente:
 
 Sitio público: [Recetas](https://www.miguellobato.com/recipes/).
 

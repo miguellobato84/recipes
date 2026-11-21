@@ -13,7 +13,7 @@ raciones: no especificadas
 - 1 coliflor
 - 1 cucharada de ras al-hanout
 - 2 cucharadas de tahini
-- medio limón
+- 0,5 limón
 - granada
 - perejil
 - aceite de oliva

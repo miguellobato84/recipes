@@ -18,6 +18,7 @@ Este repositorio es una colección canónica de recetas. Prioriza legibilidad hu
 - El H1 coincide con `titulo`; la carpeta de categoría coincide con `categoria`. En recetas de `principales`, la subcarpeta identifica la subcategoría.
 - Ingredientes usan viñetas; pasos usan lista numerada; cada paso describe una acción.
 - Todas las cantidades medibles se expresan preferentemente en masa, usando g o kg. Solo usa ml o l cuando no sea razonable expresar la cantidad en masa. No uses cucharaditas, cucharadas, tazas u otras medidas caseras.
+- Escribe las cantidades con cifras, no con palabras. Usa decimales con coma para cantidades fraccionarias; no uses fracciones con barra como `1/2`.
 - Conserva cantidades, unidades, temperaturas, tiempos e incertidumbre recibidas. No inventes datos ausentes: explica incertidumbre en `Notas`.
 - Escribe recetas, metadatos y notas en español, salvo que usuario pida expresamente otro idioma.
 
@@ -31,6 +32,7 @@ Este repositorio es una colección canónica de recetas. Prioriza legibilidad hu
 ## Web de recetas
 
 - Las recetas Markdown son la fuente canónica del navegador web.
+- El multiplicador del navegador actúa solo sobre números en líneas de ingredientes. Escala todos los números salvo porcentajes, que no se escalan; usa decimales y rangos numéricos, no fracciones con barra.
 - Genera el sitio con `python3 scripts/generate_site.py`. La plantilla, los estilos y el JavaScript viven en `site/`; el resultado se escribe en `docs/`.
 - El workflow de GitHub Actions despliega `docs/` a GitHub Pages cuando hay un push a `main`.
 - No edites a mano los ficheros generados en `docs/`; vuelve a ejecutar el generador.

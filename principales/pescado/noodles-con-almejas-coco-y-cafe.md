@@ -17,7 +17,7 @@ raciones: no especificadas
 - 150 g de noodles
 - 150 ml de vino de manzanilla
 - 400 ml de leche de coco
-- 100 ml de caldo de pescado o media pastilla de caldo
+- 100 ml de caldo de pescado o 0,5 pastilla de caldo
 - 4 piparras en vinagre
 - 1 cucharada de pimentón
 - 400 g de almejas o mejillones

@@ -12,7 +12,7 @@ raciones: no especificadas
 
 - 300 g de lentejas
 - 1 cebolla
-- medio pimiento verde
+- 0,5 pimiento verde
 - 1 zanahoria
 - 4 dientes de ajo
 - 1 chorizo, sustituible por 50 g de aceite

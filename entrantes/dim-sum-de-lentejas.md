@@ -15,7 +15,7 @@ raciones: no especificadas
 - 2 cebollas
 - 4 dientes de ajo
 - 1 zanahoria
-- un cuarto de col verde
+- 0,25 de col verde
 - láminas de pasta wonton
 - jengibre
 - salsa de soja

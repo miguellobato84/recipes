@@ -176,6 +176,10 @@ button:focus-visible, a:focus-visible, input:focus-visible, summary:focus-visibl
 .detail-actions { display: flex; gap: 8px; }
 .detail-title { margin: 0; font-size: clamp(2rem, 6vw, 3.3rem); font-weight: 540; letter-spacing: -.05em; line-height: 1.08; }
 .detail-facts { display: flex; flex-wrap: wrap; gap: 9px 20px; margin: 15px 0 13px; color: var(--muted); font-size: .9rem; }
+.multiplier-control { display: inline-flex; align-items: center; gap: 8px; color: var(--muted); font-size: .88rem; }
+.recipe-detail > .multiplier-control { margin-top: 10px; }
+.multiplier-input { width: 82px; min-height: 38px; padding: 6px 9px; border: 1px solid var(--line); border-radius: 10px; background: var(--panel); color: var(--text); text-align: right; }
+.multiplier-suffix { color: var(--text); font-weight: 650; }
 .tag-list { display: flex; flex-wrap: wrap; gap: 7px; margin: 0 0 30px; }
 .tag { padding: 5px 9px; border: 1px solid var(--line); border-radius: 999px; color: var(--muted); font-size: .76rem; }
 .detail-section { margin-top: 28px; }
@@ -194,6 +198,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, summary:focus-visibl
 .cart-list { display: grid; gap: 14px; }
 .cart-entry { overflow: hidden; border: 1px solid var(--line); border-radius: var(--radius); background: var(--panel); }
 .cart-entry-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 16px; border-bottom: 1px solid var(--line); }
+.cart-entry-header > .multiplier-control { margin-left: auto; }
 .cart-entry-title { display: block; color: var(--text); font-size: 1.02rem; font-weight: 580; text-decoration: none; }
 .cart-entry-title:hover { color: var(--accent); }
 .cart-entry-path { display: block; overflow: hidden; margin-top: 4px; color: var(--subtle); font-size: .73rem; text-overflow: ellipsis; white-space: nowrap; }
@@ -264,7 +269,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, summary:focus-visibl
   .recipe-meta { font-size: .73rem; }
   .detail-topline { margin-bottom: 18px; }
   .detail-title { font-size: 2.15rem; }
-  .cart-entry-header { padding: 12px; }
+  .cart-entry-header { flex-wrap: wrap; padding: 12px; }
   .cart-entry-body { padding: 11px 13px 14px; }
 }
 

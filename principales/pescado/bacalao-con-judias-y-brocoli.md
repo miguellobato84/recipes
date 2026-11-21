@@ -12,8 +12,8 @@ raciones: no especificadas
 
 - 200 g de judías blancas cocidas
 - 300 g de lomos de bacalao congelado
-- media cebolla
-- medio brócoli
+- 0,5 cebolla
+- 0,5 brócoli
 - 1 limón
 - cebollino
 - tomillo
