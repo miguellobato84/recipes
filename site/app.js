@@ -41,7 +41,7 @@
   }
 
   const state = {
-    view: "recipes",
+    view: "home",
     category: "all",
     recipeId: null,
     search: "",
@@ -211,8 +211,9 @@
     const list = element("div", "recipe-list");
     visible.forEach((recipe) => {
       const row = element("article", "recipe-row");
-      const open = actionButton("", "open-recipe", "recipe-open", `Ver ${recipe.title}`);
-      open.dataset.recipeId = recipe.id;
+      const open = element("a", "recipe-open");
+      open.href = recipeUrl(recipe);
+      open.setAttribute("aria-label", `Ver ${recipe.title}`);
       const mark = element("span", "recipe-mark", recipe.title.trim().charAt(0).toLocaleUpperCase("es"));
       mark.setAttribute("aria-hidden", "true");
       const copy = element("span", "recipe-copy");
@@ -242,6 +243,7 @@
     const topLine = element("div", "detail-topline");
     topLine.append(actionButton("‹ Volver", "back-to-list", "back-button", "Volver a las recetas"));
     const actions = element("div", "detail-actions");
+    actions.append(actionButton("Compartir", "share-recipe", "share-button", `Copiar enlace de ${recipe.title}`));
     const add = actionButton("Añadir al carrito", "add-recipe", "add-button", `Añadir ${recipe.title} a la lista de la compra`);
     add.dataset.recipeId = recipe.id;
     actions.append(add);
@@ -264,6 +266,45 @@
     appendDetailSection(detail, "Pasos", recipe.steps, true);
     appendDetailSection(detail, "Notas", recipe.notes, false, "notes");
     content.append(detail);
+  }
+
+  function recipeUrl(recipe) {
+    return `${window.location.pathname}${window.location.search}#receta/${recipe.id}`;
+  }
+
+  function clearRecipeHash() {
+    if (window.location.hash.startsWith("#receta/")) {
+      history.replaceState(null, "", `${window.location.pathname}${window.location.search}`);
+    }
+  }
+
+  function recipeFromLocation() {
+    const match = window.location.hash.match(/^#receta\/(.+)$/);
+    if (!match) return null;
+    try {
+      const id = decodeURIComponent(match[1]);
+      return recipeById.has(id) ? id : null;
+    } catch {
+      return null;
+    }
+  }
+
+  function renderHome() {
+    const home = element("section", "home-view");
+    home.append(element("p", "eyebrow", "TU RECETARIO"));
+    home.append(element("h2", "home-title", "¿Qué cocinamos hoy?"));
+    home.append(element("p", "home-copy", "Explora las categorías o busca una receta para empezar."));
+    home.append(actionButton("Explorar recetas", "browse-recipes", "home-button"));
+    const categoryHeading = element("h3", "home-category-heading", "Explorar por categoría");
+    home.append(categoryHeading);
+    const categoryLinks = element("div", "home-categories");
+    groups.forEach((group) => {
+      const button = actionButton(groupLabel(group), "category", "home-category");
+      button.dataset.category = group.key;
+      categoryLinks.append(button);
+    });
+    home.append(categoryLinks);
+    content.append(home);
   }
 
   function makeEntryId() {
@@ -355,6 +396,12 @@
     }
 
     state.recipeId = null;
+    if (state.view === "home") {
+      pageTitle.textContent = "Inicio";
+      document.title = "Recetas";
+      renderHome();
+      return;
+    }
     pageTitle.textContent = "Recetas";
     document.title = "Recetas";
     renderRecipeList();
@@ -372,18 +419,33 @@
     const button = event.target.closest("[data-action]");
     if (!button) return;
     const { action, category, recipeId, entryId } = button.dataset;
+    if (action === "home") event.preventDefault();
 
     if (action === "recipes") {
+      state.view = "recipes";
+      state.recipeId = null;
+      clearRecipeHash();
+      render();
+    } else if (action === "home") {
+      state.view = "home";
+      state.recipeId = null;
+      state.search = "";
+      searchInput.value = "";
+      clearRecipeHash();
+      render();
+    } else if (action === "browse-recipes") {
       state.view = "recipes";
       state.recipeId = null;
       render();
     } else if (action === "cart") {
       state.view = "cart";
       state.recipeId = null;
+      clearRecipeHash();
       render();
     } else if (action === "category") {
       state.view = "recipes";
       state.recipeId = null;
+      clearRecipeHash();
       state.category = category || "all";
       const details = mobileCategories.querySelector("details");
       if (details && window.matchMedia("(max-width: 759px)").matches) details.open = false;
@@ -391,12 +453,24 @@
     } else if (action === "open-recipe") {
       state.view = "recipes";
       state.recipeId = recipeId;
+      const recipe = recipeById.get(recipeId);
+      if (recipe) history.pushState(null, "", recipeUrl(recipe));
       render();
       window.scrollTo({ top: 0, behavior: "smooth" });
+    } else if (action === "share-recipe") {
+      const recipe = recipeById.get(state.recipeId);
+      if (recipe) {
+        const url = new URL(recipeUrl(recipe), window.location.href).href;
+        navigator.clipboard?.writeText(url).then(
+          () => showToast("Enlace copiado."),
+          () => showToast(url),
+        ) ?? showToast(url);
+      }
     } else if (action === "add-recipe") {
       addRecipe(recipeId);
     } else if (action === "back-to-list") {
       state.recipeId = null;
+      clearRecipeHash();
       render();
     } else if (action === "remove-recipe") {
       state.cart = state.cart.filter((entry) => entry.id !== entryId);
@@ -412,6 +486,8 @@
 
   searchInput.addEventListener("input", () => {
     state.search = searchInput.value;
+    state.view = "recipes";
+    state.recipeId = null;
     render();
     searchInput.focus();
     searchInput.setSelectionRange(searchInput.value.length, searchInput.value.length);
@@ -428,9 +504,19 @@
     }
     if (event.key === "Escape" && state.recipeId) {
       state.recipeId = null;
+      clearRecipeHash();
       render();
     }
   });
 
+  state.recipeId = recipeFromLocation();
+  if (state.recipeId) state.view = "recipes";
+  function syncLocation() {
+    state.recipeId = recipeFromLocation();
+    state.view = state.recipeId ? "recipes" : "home";
+    render();
+  }
+  window.addEventListener("popstate", syncLocation);
+  window.addEventListener("hashchange", syncLocation);
   render();
 })();
