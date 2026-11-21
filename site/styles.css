@@ -166,6 +166,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, summary:focus-visibl
 .text-button { min-height: 38px; padding: 0 12px; border-radius: 11px; color: var(--danger); font-size: .83rem; }
 .text-button:hover { border-color: var(--danger); background: #37252d; }
 .back-button { min-height: 38px; padding: 0 12px; border-radius: 11px; color: var(--muted); font-size: .85rem; }
+.back-button { text-decoration: none; }
 .back-button:hover { background: var(--panel-hover); color: var(--text); }
 .share-button { min-height: 38px; padding: 0 12px; border: 1px solid var(--line); border-radius: 11px; background: var(--panel); color: var(--accent); font-size: .85rem; cursor: pointer; }
 .share-button:hover { border-color: var(--accent); background: var(--accent-soft); }
@@ -178,7 +179,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, summary:focus-visibl
 .tag-list { display: flex; flex-wrap: wrap; gap: 7px; margin: 0 0 30px; }
 .tag { padding: 5px 9px; border: 1px solid var(--line); border-radius: 999px; color: var(--muted); font-size: .76rem; }
 .detail-section { margin-top: 28px; }
-.detail-section h3 { margin: 0 0 12px; padding-bottom: 9px; border-bottom: 1px solid var(--line); font-size: 1.36rem; font-weight: 620; letter-spacing: -.025em; }
+.detail-section h2, .detail-section h3 { margin: 0 0 12px; padding-bottom: 9px; border-bottom: 1px solid var(--line); font-size: 1.36rem; font-weight: 620; letter-spacing: -.025em; }
 .detail-list { display: grid; gap: 8px; margin: 0; padding-left: 22px; color: #ded9e4; line-height: 1.55; }
 .detail-list li { padding-left: 3px; }
 .detail-list li::marker { color: var(--accent); }

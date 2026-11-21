@@ -269,12 +269,18 @@
   }
 
   function recipeUrl(recipe) {
-    return `${window.location.pathname}${window.location.search}#receta/${recipe.id}`;
+    return recipe.url;
   }
 
-  function clearRecipeHash() {
+  function clearRecipeRoute() {
     if (window.location.hash.startsWith("#receta/")) {
       history.replaceState(null, "", `${window.location.pathname}${window.location.search}`);
+      return;
+    }
+    const routeRecipe = recipes.find((recipe) => window.location.pathname.endsWith(recipe.url));
+    if (routeRecipe) {
+      const homePath = window.location.pathname.slice(0, -routeRecipe.url.length) || "/";
+      history.replaceState(null, "", `${homePath}${window.location.search}`);
     }
   }
 
@@ -424,14 +430,14 @@
     if (action === "recipes") {
       state.view = "recipes";
       state.recipeId = null;
-      clearRecipeHash();
+      clearRecipeRoute();
       render();
     } else if (action === "home") {
       state.view = "home";
       state.recipeId = null;
       state.search = "";
       searchInput.value = "";
-      clearRecipeHash();
+      clearRecipeRoute();
       render();
     } else if (action === "browse-recipes") {
       state.view = "recipes";
@@ -440,12 +446,12 @@
     } else if (action === "cart") {
       state.view = "cart";
       state.recipeId = null;
-      clearRecipeHash();
+      clearRecipeRoute();
       render();
     } else if (action === "category") {
       state.view = "recipes";
       state.recipeId = null;
-      clearRecipeHash();
+      clearRecipeRoute();
       state.category = category || "all";
       const details = mobileCategories.querySelector("details");
       if (details && window.matchMedia("(max-width: 759px)").matches) details.open = false;
@@ -469,8 +475,8 @@
     } else if (action === "add-recipe") {
       addRecipe(recipeId);
     } else if (action === "back-to-list") {
+      clearRecipeRoute();
       state.recipeId = null;
-      clearRecipeHash();
       render();
     } else if (action === "remove-recipe") {
       state.cart = state.cart.filter((entry) => entry.id !== entryId);
@@ -504,7 +510,7 @@
     }
     if (event.key === "Escape" && state.recipeId) {
       state.recipeId = null;
-      clearRecipeHash();
+      clearRecipeRoute();
       render();
     }
   });

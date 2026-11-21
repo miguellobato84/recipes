@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import csv
+import html
 import json
 import re
 import shutil
@@ -14,6 +15,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 SITE_DIR = ROOT / "site"
 OUTPUT_DIR = ROOT / "docs"
+PUBLIC_BASE_URL = "https://www.miguellobato.com/recipes/"
 SECTIONS = ("Ingredientes", "Utensilios", "Pasos", "Notas")
 NON_RECIPE_DIRS = {".git", "docs", "scripts", "site"}
 
@@ -109,6 +111,7 @@ def parse_recipe(path: Path) -> dict[str, object]:
     sections = parse_sections(path, text, str(metadata["titulo"]))
     return {
         "id": relative.with_suffix("").as_posix(),
+        "url": f"{relative.with_suffix('').as_posix()}/",
         "path": relative.as_posix(),
         "title": metadata["titulo"],
         "category": category,
@@ -137,6 +140,125 @@ def collect_recipes() -> list[dict[str, object]]:
     return recipes
 
 
+def escape(value: object) -> str:
+    return html.escape(str(value), quote=True)
+
+
+def render_list(items: list[str], ordered: bool = False) -> str:
+    tag = "ol" if ordered else "ul"
+    entries = "\n".join(f"            <li>{escape(item)}</li>" for item in items)
+    return f"          <{tag} class=\"detail-list\">\n{entries}\n          </{tag}>"
+
+
+def render_recipe_page(recipe: dict[str, object]) -> str:
+    title = escape(recipe["title"])
+    category = str(recipe["category"])
+    category_labels = {
+        "desayunos": "Desayunos",
+        "entrantes": "Entrantes",
+        "principales": "Principales",
+        "panificadora": "Panificadora",
+        "masas": "Masas",
+        "dulces": "Dulces",
+        "guarniciones": "Guarniciones",
+        "salsas": "Salsas",
+    }
+    subcategory_labels = {"carne": "Carne", "pescado": "Pescado", "vegetarianos": "Vegetarianos"}
+    category_label = category_labels.get(category, category)
+    if recipe["subcategory"]:
+        subcategory = subcategory_labels.get(str(recipe["subcategory"]), str(recipe["subcategory"]))
+        category_label += f" · {subcategory}"
+
+    absolute_url = PUBLIC_BASE_URL + str(recipe["url"])
+    depth = len(str(recipe["url"]).strip("/").split("/"))
+    asset_prefix = "../" * depth
+    home_url = f"{asset_prefix}index.html"
+    ingredients = recipe["ingredients"]
+    utensils = recipe["utensils"]
+    steps = recipe["steps"]
+    notes = recipe["notes"]
+    schema: dict[str, object] = {
+        "@context": "https://schema.org",
+        "@type": "Recipe",
+        "name": recipe["title"],
+        "url": absolute_url,
+        "recipeCategory": category_label,
+        "recipeYield": str(recipe["servings"]),
+        "recipeIngredient": ingredients,
+        "recipeInstructions": [
+            {"@type": "HowToStep", "text": step} for step in steps
+        ],
+    }
+    if recipe["tags"]:
+        schema["keywords"] = recipe["tags"]
+    schema_json = json.dumps(schema, ensure_ascii=False, indent=2)
+    schema_json = schema_json.replace("<", "\\u003c").replace("&", "\\u0026")
+
+    def section(name: str, items: list[str], ordered: bool = False) -> str:
+        return (
+            f"<section class=\"detail-section\"><h2>{name}</h2>\n"
+            f"{render_list(items, ordered)}\n        </section>"
+        )
+
+    return f"""<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#15131a">
+    <meta name="description" content="Receta de {title}: ingredientes y pasos de preparación.">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="{title} · Recetas">
+    <meta property="og:description" content="Ingredientes y pasos de preparación.">
+    <link rel="canonical" href="{escape(absolute_url)}">
+    <link rel="stylesheet" href="{asset_prefix}assets/styles.css">
+    <title>{title} · Recetas</title>
+    <script type="application/ld+json">{schema_json}</script>
+  </head>
+  <body>
+    <main class="content">
+      <article class="recipe-detail">
+        <div class="detail-topline">
+          <a class="back-button" href="{home_url}">‹ Ir al recetario</a>
+          <button class="share-button" type="button" onclick="navigator.clipboard ? navigator.clipboard.writeText(location.href).then(() => this.textContent = 'Enlace copiado').catch(() => window.prompt('Copia el enlace', location.href)) : window.prompt('Copia el enlace', location.href)">Compartir</button>
+        </div>
+        <h1 class="detail-title">{title}</h1>
+        <div class="detail-facts">
+          <span>Raciones: {escape(recipe["servings"])}</span>
+          <span>{escape(category_label)}</span>
+        </div>
+        {section("Ingredientes", ingredients)}
+        {section("Utensilios", utensils)}
+        {section("Pasos", steps, ordered=True)}
+        {section("Notas", notes)}
+      </article>
+    </main>
+  </body>
+</html>
+"""
+
+
+def write_recipe_pages(recipes: list[dict[str, object]]) -> None:
+    sitemap_urls = [PUBLIC_BASE_URL]
+    for recipe in recipes:
+        page_dir = OUTPUT_DIR / str(recipe["id"])
+        page_dir.mkdir(parents=True, exist_ok=True)
+        (page_dir / "index.html").write_text(render_recipe_page(recipe), encoding="utf-8")
+        sitemap_urls.append(PUBLIC_BASE_URL + str(recipe["url"]))
+
+    entries = "\n".join(f"  <url><loc>{escape(url)}</loc></url>" for url in sitemap_urls)
+    sitemap = (
+        '<?xml version="1.0" encoding="UTF-8"?>\n'
+        '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+        f"{entries}\n</urlset>\n"
+    )
+    (OUTPUT_DIR / "sitemap.xml").write_text(sitemap, encoding="utf-8")
+    (OUTPUT_DIR / "robots.txt").write_text(
+        f"User-agent: *\nAllow: /\nSitemap: {PUBLIC_BASE_URL}sitemap.xml\n",
+        encoding="utf-8",
+    )
+
+
 def main() -> int:
     try:
         recipes = collect_recipes()
@@ -150,11 +272,12 @@ def main() -> int:
         data = data.replace("&", "\\u0026").replace("<", "\\u003c").replace(">", "\\u003e")
         OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
         (OUTPUT_DIR / "index.html").write_text(template.replace(marker, data), encoding="utf-8")
+        write_recipe_pages(recipes)
         assets_dir = OUTPUT_DIR / "assets"
         assets_dir.mkdir(parents=True, exist_ok=True)
         shutil.copyfile(SITE_DIR / "styles.css", assets_dir / "styles.css")
         shutil.copyfile(SITE_DIR / "app.js", assets_dir / "app.js")
-        print(f"Generadas {len(recipes)} recetas en {OUTPUT_DIR.relative_to(ROOT)}/index.html")
+        print(f"Generadas {len(recipes)} páginas de receta y un sitemap en {OUTPUT_DIR.relative_to(ROOT)}")
         return 0
     except (OSError, ValueError) as error:
         print(f"Error al generar el sitio: {error}", file=sys.stderr)
