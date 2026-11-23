@@ -233,6 +233,7 @@ def render_recipe_page(recipe: dict[str, object]) -> str:
     <meta property="og:title" content="{title} · Recetas">
     <meta property="og:description" content="Ingredientes y pasos de preparación.">
     <link rel="canonical" href="{escape(absolute_url)}">
+    <link rel="icon" type="image/svg+xml" href="{asset_prefix}favicon.svg">
     <link rel="stylesheet" href="{asset_prefix}assets/styles.css">
     <title>{title} · Recetas</title>
     <script type="application/ld+json">{schema_json}</script>
@@ -323,11 +324,12 @@ def main() -> int:
             raise ValueError(f"{template_path}: se requiere exactamente un marcador {marker}")
 
         OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
-        if template.count("{{ASSET_PREFIX}}") != 4 or template.count("{{INITIAL_CATEGORY}}") != 1:
+        if template.count("{{ASSET_PREFIX}}") != 5 or template.count("{{INITIAL_CATEGORY}}") != 1:
             raise ValueError(f"{template_path}: marcadores de categoría no válidos")
         (OUTPUT_DIR / "index.html").write_text(render_app_page(template, recipes), encoding="utf-8")
         write_category_pages(template, recipes)
         write_recipe_pages(recipes)
+        shutil.copyfile(SITE_DIR / "favicon.svg", OUTPUT_DIR / "favicon.svg")
         assets_dir = OUTPUT_DIR / "assets"
         assets_dir.mkdir(parents=True, exist_ok=True)
         shutil.copyfile(SITE_DIR / "styles.css", assets_dir / "styles.css")
